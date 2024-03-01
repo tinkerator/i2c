@@ -2,7 +2,7 @@
 // real time clock chip. The data sheet for which is:
 //
 //	https://www.ablic.com/en/doc/datasheet/real_time_clock/S35390A_E.pdf
-package main
+Package main
 
 import (
 	"encoding/binary"
@@ -29,9 +29,10 @@ const (
 )
 
 var (
-	reset = flag.Bool("reset", false, "force a reset")
-	clock = flag.Bool("clock", false, "track the time")
-	set   = flag.Bool("set", false, "set the date, in UTC, from the system clock")
+	reset    = flag.Bool("reset", false, "force a reset")
+	clock    = flag.Bool("clock", false, "track the time")
+	set      = flag.Bool("set", false, "set the date, in UTC, from the system clock")
+	duration = flag.Duration("watch", 3*time.Minute, "time to watch the clock for")
 )
 
 // toDeviceBCD converts the assumed 8-bit integer to the BCD format
@@ -115,8 +116,6 @@ func SetDate(delay time.Duration) (time.Duration, error) {
 	return (t3.Sub(t1) + t2.Sub(t1) + 1) / 2, err
 }
 
-// Dump logs all of the data from the device. Note some reads have
-// side effects.
 func main() {
 	flag.Parse()
 	dump := func(addr, n uint) {
@@ -163,8 +162,8 @@ func main() {
 
 	if *clock {
 		var ot time.Time
-		target := time.Now().Add(180 * time.Second).In(time.UTC)
-		for ot.Before(target) {
+		target := time.Now().Add(*duration).In(time.UTC)
+		for time.Now().Before(target) {
 			t, err := Now()
 			if ot == t {
 				continue

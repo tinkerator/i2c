@@ -1,5 +1,7 @@
 // Package i2c abstracts use of the Linux kernel's i2c/smbus device
 // drivers.
+//
+// Example usage:
 package i2c // zappem.net/pub/io/i2c
 
 import (
@@ -33,6 +35,7 @@ type Conn struct {
 	endian binary.ByteOrder
 }
 
+// ErrInvalid etc are errors reported by the package.
 var (
 	ErrInvalid   = errors.New("invalid connection")
 	ErrClosed    = errors.New("connection closed")
@@ -75,14 +78,14 @@ func (c *Conn) Close() error {
 	return err
 }
 
-// BusFile is a convenience file for locating the bus numbered device
-// file.
+// BusFile is a convenience function for locating the numbered bus
+// device file.
 func BusFile(n uint) string {
 	return fmt.Sprintf("/dev/i2c-%d", n)
 }
 
-// NewConn establishes a new connection to an addressed
-// device. Whether or not the device uses 10-bit addressing and which
+// NewConn establishes a new connection to an addressed device.
+// Whether or not the device uses 10-bit addressing and which
 // endianness it is are device specific considerations.
 func NewConn(bus string, addr uint, tenBit bool, endian binary.ByteOrder) (*Conn, error) {
 	f, err := os.OpenFile(bus, os.O_RDWR, 0600)
@@ -105,7 +108,7 @@ func NewConn(bus string, addr uint, tenBit bool, endian binary.ByteOrder) (*Conn
 	return c, nil
 }
 
-// read reads up to data bytes from the open connection.
+// Read reads up to data bytes from the open connection.
 func (c *Conn) Read(data []byte) (int, error) {
 	if c == nil {
 		return 0, ErrInvalid
@@ -118,7 +121,7 @@ func (c *Conn) Read(data []byte) (int, error) {
 	return c.f.Read(data)
 }
 
-// write writes data bytes to the open connection.
+// Write writes data bytes to the open connection.
 func (c *Conn) Write(data []byte) (int, error) {
 	if c == nil {
 		return 0, ErrInvalid
