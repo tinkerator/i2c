@@ -19,6 +19,11 @@ $ GOARCH=arm GOOS=linux go build example/s35390.go
 
 This example is for a specific i2c device: a [real time clock]( https://www.ablic.com/en/doc/datasheet/real_time_clock/S35390A_E.pdf).
 
+Another example looks at the two supported addresses for one of the [Bosch pressure sensors](https://community.bosch-sensortec.com/t5/Knowledge-base/BMP-series-pressure-sensor-design-guide/ta-p/7103):
+```
+$ GOARCH=arm GOOS=linux go build example/bpmx8x.go
+```
+
 ## TODOs
 
 Explore some different i2c Raspberry Pi hats, perhaps add some more

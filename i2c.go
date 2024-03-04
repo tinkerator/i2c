@@ -211,3 +211,31 @@ func (c *Conn) WriteUint64(val uint64) error {
 	}
 	return nil
 }
+
+// RegN reads n bytes starting from the register value from the open
+// connection. This sequence is equivalent to a write of the register
+// value followed by an n-byte read.
+func (c *Conn) RegN(reg, n int) ([]byte, error) {
+	if n < 1 || c == nil || reg < 0 || reg > 0xff {
+		return nil, ErrInvalid
+	}
+	if j, err := c.Write([]byte{byte(reg)}); err != nil || j != n {
+		return nil, ErrInvalid
+	}
+	d := make([]byte, n)
+	if j, err := c.Read(d); err != nil || j != n {
+		return nil, ErrInvalid
+	}
+	return d, nil
+}
+
+// Reg reads a single byte sized register value from the open
+// connection. This sequence is equivalent to a write of the register
+// value followed by a single byte read.
+func (c *Conn) Reg(reg int) (byte, error) {
+	d, err := c.RegN(reg, 1)
+	if err != nil {
+		return 0, err
+	}
+	return d[0], nil
+}
