@@ -219,7 +219,7 @@ func (c *Conn) RegN(reg, n int) ([]byte, error) {
 	if n < 1 || c == nil || reg < 0 || reg > 0xff {
 		return nil, ErrInvalid
 	}
-	if j, err := c.Write([]byte{byte(reg)}); err != nil || j != n {
+	if j, err := c.Write([]byte{byte(reg)}); err != nil || j != 1 {
 		return nil, ErrInvalid
 	}
 	d := make([]byte, n)
